@@ -1,0 +1,623 @@
+/* ============================================
+   DESIGN TOKENS
+   Palette pulled directly from the reference image:
+   deep navy background, warm gold accent, white text.
+   ============================================ */
+:root {
+  --color-navy-deep: #0a1628;
+  --color-navy: #0d1d33;
+  --color-navy-card: rgba(13, 29, 51, 0.72);
+  --color-navy-card-border: rgba(255, 255, 255, 0.08);
+
+  --color-gold: #e8a23a;
+  --color-gold-soft: #f0b75a;
+
+  --color-white: #ffffff;
+  --color-text-soft: rgba(255, 255, 255, 0.78);
+  --color-text-faint: rgba(255, 255, 255, 0.55);
+
+  --color-green: #18da48;
+  --color-green-dark: #0d8d2f;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: "Inter", -apple-system, sans-serif;
+
+  --radius-md: 14px;
+  --radius-sm: 8px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================
+   RESET
+   ============================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-white);
+  background: var(--color-navy-deep);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+select {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ============================================
+   HERO SECTION
+   Background photo of the ship + dark gradient
+   overlay so the white/gold text stays readable
+   over any part of the image.
+   ============================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-image: url("assets/df6f9231-bc76-4d00-a416-d4510fb06464.png");
+  background-size: cover;
+  background-position: 30% 38%;
+  background-repeat: no-repeat;
+  background-color: var(--color-navy-deep); /* fallback while image loads */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8vh 0 6vh;
+}
+
+/* Dark gradient overlay: darker at the top-left (where the headline sits)
+   and at the very bottom (footer credit line), lighter toward the ship
+   itself so the photo stays visible like in the reference. */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      100deg,
+      rgba(6, 12, 22, 0.88) 0%,
+      rgba(8, 16, 28, 0.55) 38%,
+      rgba(8, 16, 28, 0.12) 60%,
+      rgba(8, 16, 28, 0.25) 82%,
+      rgba(6, 12, 22, 0.5) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(6, 12, 22, 0.1) 0%,
+      rgba(6, 12, 22, 0) 30%,
+      rgba(6, 12, 22, 0) 72%,
+      rgba(6, 12, 22, 0.45) 100%
+    );
+  pointer-events: none;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 4vw;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(2rem, 0.1vw, 5rem);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .hero__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   LEFT COLUMN — Headline + copy
+   ============================================ */
+.hero__text {
+  padding-top: 2vh;
+  max-width: 620px;
+  margin-left: clamp(-1rem, -1vw, 0px);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 1.5rem;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp( 3rem, 8vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--color-white);
+  margin-bottom: 1.5rem;
+  overflow-wrap: break-word;
+}
+
+.headline__accent { 
+  color: var(--color-gold);
+  font-weight: 800;
+  font-size: 5.5rem;
+}
+
+.subcopy {
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  color: var(--color-text-soft);
+  max-width: 480px;
+  margin-bottom: 1.75rem;
+  line-height: 1.6;
+}
+
+.confidential {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.confidential__line {
+  list-style: none;
+  display: inline-block;
+  color: #21549b;
+}
+
+/* ============================================
+   RIGHT COLUMN — Bid form card
+   ============================================ */
+.hero__form-wrap {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.bid-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--color-navy-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--color-navy-card-border);
+  border-radius: var(--radius-md);
+  padding: 2.25rem 2rem;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.bid-card__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #21549b;
+  text-align: center;
+  margin-bottom: 0.9rem;
+}
+
+.bid-card__divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    black,
+    transparent
+  );
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-soft);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+  font-size: 0.92rem;
+  transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(232, 162, 58, 0.18);
+}
+
+/* Custom dropdown arrow for the select, drawn in gold to match the theme */
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23e8a23a'><path d='M5 7l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 14px;
+  padding-right: 2.2rem;
+}
+
+.field select option {
+  background: var(--color-navy);
+  color: var(--color-white);
+}
+
+/* Inline feedback message shown after submit attempt */
+.form-feedback {
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  min-height: 0;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+.form-feedback.is-visible {
+  opacity: 1;
+}
+
+.form-feedback.is-success {
+  color: var(--color-green);
+}
+
+.form-feedback.is-error {
+  color: #ff8a8a;
+}
+
+.submit-btn {
+  font-family: var(--font-display);
+  width: auto;
+  padding: 0.85rem 2.2rem;
+  margin-left: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-green) 0%, var(--color-green-dark) 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  box-shadow: 0 14px 34px rgba(43, 178, 76, 0.35);
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 42px rgba(43, 178, 76, 0.45);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   FOOTER CREDIT LINE
+   ============================================ */
+.hero__footer-note {
+  position: absolute;
+  bottom: 3vh;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+}
+
+/* ============================================
+   SCROLL / LOAD ANIMATIONS
+   Elements with [data-animate] start hidden and
+   slide/fade in — toggled by script.js, either on
+   page load (hero is always visible) or on scroll
+   into view for any future sections.
+   ============================================ */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+
+[data-animate].is-in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+  .hero__content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 0 4vw;
+  }
+
+  .hero__text {
+    margin-left: 0;        /* já estava removendo, mas garante aqui também */
+  }
+
+  .headline {
+    font-size: clamp(2.4rem, 6vw, 3.2rem);
+  }
+
+  .confidential {
+    margin-bottom: 1rem;
+  }
+
+  .hero__form-wrap {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .bid-card {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    background-image: url("assets/ship-mobile.png");
+    background-size: cover;
+    background-position: center 60%;
+  }
+
+  .hero__text {
+    margin-left: 0;
+  }
+
+  .hero__content {
+    padding: 0 5vw;
+  }
+
+  .headline {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+  }
+
+  .subcopy {
+    font-size: 1rem;
+  }
+
+  .bid-card {
+    max-width: 100%;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .hero__footer-note {
+    margin-top: 3vh;
+    font-size: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* ============================================
+   SUCCESS OVERLAY
+   Shown briefly after a successful bid submission,
+   then fades out automatically.
+   ============================================ */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 12, 22, 0.92);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s var(--ease-out), visibility 0.4s var(--ease-out);
+}
+
+.success-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.success-overlay__box {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  max-width: 380px;
+}
+
+.success-overlay__icon {
+  width: 64px;
+  height: 64px;
+  color: var(--color-green);
+  margin: 0 auto 1.25rem;
+}
+
+.success-overlay__box h2 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--color-white);
+  margin-bottom: 0.75rem;
+}
+
+.success-overlay__box p {
+  font-size: 0.95rem;
+  color: var(--color-text-soft);
+  line-height: 1.6;
+}
+
+/* ===== Botão que abre o vídeo ===== */
+.video-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.1rem;
+  background: transparent;
+  border: 1px solid rgba(245, 166, 35, 0.45);
+  border-radius: 8px;
+  color: #f5a623;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.video-trigger:hover {
+  background: rgba(245, 166, 35, 0.1);
+  border-color: #f5a623;
+  transform: translateY(-1px);
+}
+
+.video-trigger .play-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f5a623;
+  color: #0a1628;
+  flex-shrink: 0;
+}
+
+/* ===== Overlay e modal ===== */
+.video-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 20, 0.85);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.video-modal-overlay.is-open {
+  display: flex;
+  animation: fadeIn 0.2s ease;
+}
+
+.video-modal {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  background: #0c1a2e;
+  border: 1px solid rgba(245, 166, 35, 0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: scaleIn 0.2s ease;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(10, 22, 40, 0.7);
+  color: #f5a623;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.video-modal-close:hover {
+  background: rgba(245, 166, 35, 0.2);
+}
+
+.video-modal-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.video-modal-wrapper iframe,
+.video-modal-wrapper video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}

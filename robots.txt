@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://superportacu.com.br/sitemap.xml
