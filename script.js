@@ -165,7 +165,7 @@ async function submitBid(data) {
   if (!response.ok) {
     throw new Error("Bid submission failed");
   }
-
+ 
   return response.json().catch(() => ({}));
 }
 
