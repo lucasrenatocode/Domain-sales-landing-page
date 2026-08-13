@@ -75,9 +75,11 @@ function isInViewport(el) {
 /* ============================================
    2. BID FORM
    Validates required fields, then sends the data
-   to a backend endpoint via fetch(). The endpoint
-   itself (and the destination e-mail) is NOT
-   implemented yet — see the TODO below.
+   to the backend endpoint (submit-bid.php) via
+   fetch(). The endpoint is the only place that
+   knows the destination e-mail and the Resend
+   API key, both read from private server-side
+   config — never exposed here.
    ============================================ */
 function initBidForm() {
   const form = document.getElementById("bid-form");
@@ -104,17 +106,10 @@ function initBidForm() {
     setSubmitting(submitBtn, true);
  
     try {
-      // ===== TRECHO FAKE TEMPORÁRIO =====
-      // Simula um envio bem-sucedido, sem chamar o backend real,
-      // só para visualizar a tela de sucesso (#success-overlay).
-      // Quando o backend (Resend) estiver publicado, reverter para:
-      //   await submitBid(formData);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      // ===== FIM DO TRECHO FAKE =====
+      await submitBid(formData);
  
       form.reset();
       showSuccessOverlay();
-      form.reset();
     } catch (error) {
       showFeedback(
         feedbackEl,
@@ -145,23 +140,22 @@ function validateForm(data) {
 /**
  * Sends the bid data to the backend.
  *
- * TODO (backend integration pending):
- * Replace the endpoint below once the server-side function is ready
- * (e.g. a Vercel Function or a Cloudflare Pages Function). That
- * function is the ONLY place where the destination e-mail address
- * should exist, read from a private environment variable on the
- * server — never hardcoded here, and never sent to the browser.
+ * The endpoint is a PHP script (submit-bid.php) hosted alongside
+ * this site. It reads the destination e-mail and the Resend API
+ * key from a private config file outside the public web root —
+ * never hardcoded here, and never sent to the browser.
  *
- * Example of what the backend endpoint should do:
- *   1. Receive { name, email, city, bid } as JSON.
- *   2. Read the private destination e-mail from process.env (or the
- *      platform's equivalent secret/environment variable store).
- *   3. Send an e-mail (e.g. via Resend, SendGrid, or SMTP) with the
- *      bid details to that private address.
- *   4. Return a 200 response on success, or a non-200 status on failure.
+ * What the backend endpoint does:
+ *   1. Receives { name, email, city, bid } as JSON.
+ *   2. Reads the private destination e-mail and API key from
+ *      config/secrets.php (outside the public folder).
+ *   3. Sends an e-mail via the Resend API with the bid details
+ *      to that private address.
+ *   4. Returns a 200 response on success, or a non-200 status
+ *      on failure.
  */
 async function submitBid(data) {
-  const endpoint = "/submit-bid"; // placeholder endpoint, not implemented yet
+  const endpoint = "/submit-bid.php";
  
   const response = await fetch(endpoint, {
     method: "POST",
@@ -172,7 +166,8 @@ async function submitBid(data) {
   if (!response.ok) {
     throw new Error("Bid submission failed");
   }
-   return response.json().catch(() => ({}));
+ 
+  return response.json().catch(() => ({}));
 }
  
 /**
@@ -198,9 +193,9 @@ function showFeedback(el, message, type) {
   el.textContent = message;
   el.classList.remove("is-success", "is-error");
   el.classList.add(
-  "is-visible",
-  type === "success" ? "is-success" : "is-error"
-);
+    "is-visible",
+    type === "success" ? "is-success" : "is-error"
+  );
 }
  
 /**
@@ -231,9 +226,8 @@ function initVideoModal() {
  
   function getYouTubeId(url) {
     const match = url.match(
-        /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
- 
-        );
+      /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
     return match ? match[1] : null;
   }
  
