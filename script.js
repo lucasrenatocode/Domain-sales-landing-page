@@ -5,7 +5,7 @@
    1. Fade-up entrance animations for elements
       marked with [data-animate].
    2. Bid form validation and submission.
- 
+
    SECURITY NOTE:
    The destination e-mail address must NEVER be
    written in this file (or anywhere in the
@@ -15,13 +15,13 @@
    read from a private server-side environment
    variable.
    ============================================ */
- 
+
 document.addEventListener("DOMContentLoaded", () => {
   initEntranceAnimations();
   initBidForm();
   initVideoModal();
 });
- 
+
 /* ============================================
    1. ENTRANCE ANIMATIONS
    Elements with [data-animate] fade up into view.
@@ -33,18 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
    ============================================ */
 function initEntranceAnimations() {
   const animatedEls = document.querySelectorAll("[data-animate]");
- 
+
   // Reveal elements that are already in the viewport on load
   // (typical case: the hero content), respecting each element's
   // own stagger delay via [data-animate-delay] (in ms).
   animatedEls.forEach((el) => {
     const delay = Number(el.getAttribute("data-animate-delay") || 0);
- 
+
     if (isInViewport(el)) {
       window.setTimeout(() => el.classList.add("is-in-view"), delay);
     }
   });
- 
+
   // For elements further down the page (not yet visible), use an
   // IntersectionObserver so they animate in as the user scrolls.
   const observer = new IntersectionObserver(
@@ -59,19 +59,19 @@ function initEntranceAnimations() {
     },
     { threshold: 0.2 }
   );
- 
+
   animatedEls.forEach((el) => {
     if (!isInViewport(el)) {
       observer.observe(el);
     }
   });
 }
- 
+
 function isInViewport(el) {
   const rect = el.getBoundingClientRect();
   return rect.top < window.innerHeight && rect.bottom > 0;
 }
- 
+
 /* ============================================
    2. BID FORM
    Validates required fields, then sends the data
@@ -85,29 +85,30 @@ function initBidForm() {
   const form = document.getElementById("bid-form");
   const submitBtn = document.getElementById("submit-btn");
   const feedbackEl = document.getElementById("form-feedback");
- 
+
   if (!form) return;
- 
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
- 
+
     const formData = {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
       city: form.city.value.trim(),
       bid: form.bid.value,
     };
- 
+
     if (!validateForm(formData)) {
       showFeedback(feedbackEl, "Please fill in all fields with a valid e-mail.", "error");
       return;
     }
- 
+
     setSubmitting(submitBtn, true);
- 
+
     try {
       await submitBid(formData);
- 
+
       form.reset();
       showSuccessOverlay();
     } catch (error) {
@@ -121,7 +122,7 @@ function initBidForm() {
     }
   });
 }
- 
+
 /**
  * Simple required-field + e-mail format validation.
  * Keeps validation logic separate so it's easy to extend later
@@ -129,14 +130,14 @@ function initBidForm() {
  */
 function validateForm(data) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
- 
-  if (!data.name || !data.email || !data.city || !data.bid) {
+
+  if (!data.name || !data.email || !data.phone || !data.city || !data.bid) {
     return false;
   }
- 
+
   return emailPattern.test(data.email);
 }
- 
+
 /**
  * Sends the bid data to the backend.
  *
@@ -146,7 +147,7 @@ function validateForm(data) {
  * never hardcoded here, and never sent to the browser.
  *
  * What the backend endpoint does:
- *   1. Receives { name, email, city, bid } as JSON.
+ *   1. Receives { name, email, phone, city, bid } as JSON.
  *   2. Reads the private destination e-mail and API key from
  *      config/secrets.php (outside the public folder).
  *   3. Sends an e-mail via the Resend API with the bid details
@@ -156,40 +157,40 @@ function validateForm(data) {
  */
 async function submitBid(data) {
   const endpoint = "/submit-bid.php";
- 
+
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
- 
+
   if (!response.ok) {
     throw new Error("Bid submission failed");
   }
- 
+
   return response.json().catch(() => ({}));
 }
- 
+
 /**
  * Toggles the submit button's loading state.
  */
 function setSubmitting(button, isSubmitting) {
   if (!button) return;
- 
+
   const label = button.querySelector(".submit-btn__label");
- 
+
   button.disabled = isSubmitting;
   if (label) {
     label.textContent = isSubmitting ? "Sending…" : "Send";
   }
 }
- 
+
 /**
  * Shows a status message above the submit button.
  */
 function showFeedback(el, message, type) {
   if (!el) return;
- 
+
   el.textContent = message;
   el.classList.remove("is-success", "is-error");
   el.classList.add(
@@ -197,7 +198,7 @@ function showFeedback(el, message, type) {
     type === "success" ? "is-success" : "is-error"
   );
 }
- 
+
 /**
  * Shows the full-screen success overlay after a bid is submitted,
  * then automatically hides it after a few seconds.
@@ -205,35 +206,35 @@ function showFeedback(el, message, type) {
 function showSuccessOverlay() {
   const overlay = document.getElementById("success-overlay");
   if (!overlay) return;
- 
+
   overlay.classList.add("is-visible");
- 
+
   window.setTimeout(() => {
     overlay.classList.remove("is-visible");
   }, 4000); // disappears after 4 seconds
 }
- 
+
 // ===== Video Modal =====
 function initVideoModal() {
   const trigger = document.querySelector("[data-video-trigger]");
   const overlay = document.querySelector("[data-video-overlay]");
   const closeBtn = document.querySelector("[data-video-close]");
   const wrapper = document.querySelector("[data-video-wrapper]");
- 
+
   if (!trigger || !overlay || !wrapper) return;
- 
+
   const videoUrl = trigger.getAttribute("data-video-url");
- 
+
   function getYouTubeId(url) {
     const match = url.match(
       /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
     );
     return match ? match[1] : null;
   }
- 
+
   function openModal() {
     const youTubeId = getYouTubeId(videoUrl);
- 
+
     wrapper.innerHTML = youTubeId
       ? `<iframe
           src="https://www.youtube.com/embed/${youTubeId}?autoplay=1&rel=0"
@@ -242,24 +243,24 @@ function initVideoModal() {
           allowfullscreen
         ></iframe>`
       : `<video src="${videoUrl}" controls autoplay></video>`;
- 
+
     overlay.classList.add("is-open");
     document.body.style.overflow = "hidden";
   }
- 
+
   function closeModal() {
     overlay.classList.remove("is-open");
     wrapper.innerHTML = "";
     document.body.style.overflow = "";
   }
- 
+
   trigger.addEventListener("click", openModal);
   closeBtn.addEventListener("click", closeModal);
- 
+
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) closeModal();
   });
- 
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && overlay.classList.contains("is-open")) {
       closeModal();
