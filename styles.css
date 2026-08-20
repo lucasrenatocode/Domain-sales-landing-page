@@ -229,7 +229,7 @@ a {
 }
 
 .bid-card__title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 1.5rem;
   color: #21549b;
@@ -257,7 +257,7 @@ a {
 }
 
 .field label {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-soft);
